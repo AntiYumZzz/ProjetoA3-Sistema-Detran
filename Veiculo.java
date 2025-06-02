@@ -4,10 +4,36 @@ public class Veiculo {
     private String placa, modelo, cor, marca, historicoTranferencia;
     private int ano;
 
-    public void cadastrarVeiculo(Scanner ler) {
+    public String getPlaca() {
+        return placa;
+    }
 
-        System.out.print("Placa: ");
-        placa = ler.nextLine();
+    public void setPlaca(String placa) {
+        this.placa = placa;
+    }
+    public String getModelo() {
+        return modelo;
+    }
+
+    public String getCor() {
+        return cor;
+    }
+
+    public String getMarca() {
+        return marca;
+    }
+
+    public String getHistoricoTransferencia() {
+        return historicoTranferencia;
+    }
+
+    public int getAno() {
+        return ano;
+    }
+
+
+
+    public void cadastrarVeiculo(Scanner ler) {
 
         System.out.print("Modelo: ");
         modelo = ler.nextLine();
@@ -28,6 +54,7 @@ public class Veiculo {
     }
 
     public void exibirVeiculoCadastrado() {
+
         System.out.println(" -- Veiculo Cadastrado -- ");
         System.out.println("Placa: " + placa);
         System.out.println("Modelo: " + modelo);

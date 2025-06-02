@@ -1,10 +1,48 @@
 import java.util.Scanner;
+import java.util.ArrayList;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
 
 public class Main {
+    public static boolean placaExiste(String placa, ArrayList<Veiculo> lista) {
+        for (Veiculo v : lista) {
+            if (v.getPlaca().equalsIgnoreCase(placa)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void salvarVeiculoEmArquivo(Veiculo veiculo) {
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter("veiculos.txt", true));
+
+            bw.write("Modelo: " + veiculo.getModelo());
+            bw.newLine();
+            bw.write("Cor: " + veiculo.getCor());
+            bw.newLine();
+            bw.write("Marca: " + veiculo.getMarca());
+            bw.newLine();
+            bw.write("Histórico: " + veiculo.getHistoricoTransferencia());
+            bw.newLine();
+            bw.write("Ano: " + veiculo.getAno());
+            bw.newLine();
+            bw.write("-----------------------------");
+            bw.newLine();
+
+            bw.close();
+        } catch (IOException e) {
+            System.out.println("Erro ao salvar no arquivo: " + e.getMessage());
+        }
+    }
+
 
     public static void main(String[] args) {
         Scanner ler = new Scanner(System.in);
         int opcao = -1;
+
 
         while (opcao != 0) {
             // Menu Principal
@@ -47,29 +85,55 @@ public class Main {
 
     // Submenu 1 - Cadastro de veículos
     public static void submenuCadastroVeiculo(Scanner ler) {
+        ArrayList<Veiculo> veiculos = new ArrayList<>();
         int opcao;
         do {
             System.out.println("\n-- Cadastro de Veículos --");
             System.out.println("1. Cadastrar novo veiculo");
-            System.out.println("2. Voltar ao menu principal");
+            System.out.println("2. Listar veículos");
+            System.out.println("3. Voltar ao menu principal");
             opcao = ler.nextInt();
 
 
             switch (opcao) {
                 case 1:
-                    Veiculo veiculo = new Veiculo();
                     ler.nextLine();
-                    veiculo.cadastrarVeiculo(ler);
-                    System.out.println(" ");
-                    veiculo.exibirVeiculoCadastrado();
+                    System.out.print("Digite a placa: ");
+                    String placa = ler.nextLine();
+
+                    if (placaExiste(placa, veiculos)) {
+                        System.out.println("⚠ Erro: Placa já cadastrada!");
+                        break;
+                    } else {
+                        Veiculo veiculo = new Veiculo();
+                        veiculo.setPlaca(placa);
+                        veiculo.cadastrarVeiculo(ler);
+                        veiculos.add(veiculo);
+                        salvarVeiculoEmArquivo(veiculo);
+                        System.out.println(" ");
+
+                        System.out.println("Veículo cadastrado com sucesso!");
+                    }
                     break;
                 case 2:
+                    System.out.println("\n== Veículos Cadastrados ==");
+                    if (veiculos.isEmpty()) {
+                        System.out.println("Nenhum veículo cadastrado.");
+                    } else {
+                        for (Veiculo v : veiculos) {
+                            v.exibirVeiculoCadastrado();
+                            System.out.println("------------------------");
+                        }
+                    }
+                    break;
+
+                case 3:
                     System.out.println(">> Voltando ao menu principal...");
                     break;
                 default:
                     System.out.println(">> Opção inválida.");
             }
-        } while (opcao != 2);
+        } while (opcao != 3);
     }
 
     // Submenu 2 - Transferência de veículos
@@ -200,3 +264,5 @@ public class Main {
         } while (opcao != 3);
     }
 }
+
+
