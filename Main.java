@@ -4,17 +4,18 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-
-public class Main {
-    public static boolean placaExiste(String placa, ArrayList<Veiculo> lista) {
-        for (Veiculo v : lista) {
-            if (v.getPlaca().equalsIgnoreCase(placa)) {
-                return true;
+    // Método para verificar se uma placa já está cadastrada
+    public class Main {
+        public static boolean placaExiste(String placa, ArrayList<Veiculo> lista) {
+            for (Veiculo v : lista) {
+                if (v.getPlaca().equalsIgnoreCase(placa)) {
+                    return true;
+                }
             }
+            return false;
         }
-        return false;
-    }
 
+    //Método utilitário que salva os dados de um veículo em um arquivo .txt
     public static void salvarVeiculoEmArquivo(Veiculo veiculo) {
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter("veiculos.txt", true));
