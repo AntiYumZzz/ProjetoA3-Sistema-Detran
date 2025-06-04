@@ -1,19 +1,12 @@
-import java.util.Scanner;
-import java.util.ArrayList;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Scanner;
 
     // Método para verificar se uma placa já está cadastrada
     public class Main {
-        public static boolean placaExiste(String placa, ArrayList<Veiculo> lista) {
-            for (Veiculo v : lista) {
-                if (v.getPlaca().equalsIgnoreCase(placa)) {
-                    return true;
-                }
-            }
-            return false;
-        }
+        public static ArrayList<Veiculo> veiculos = new ArrayList<>();
 
     //Método utilitário que salva os dados de um veículo em um arquivo .txt
     public static void salvarVeiculoEmArquivo(Veiculo veiculo) {
@@ -25,8 +18,6 @@ import java.io.IOException;
             bw.write("Cor: " + veiculo.getCor());
             bw.newLine();
             bw.write("Marca: " + veiculo.getMarca());
-            bw.newLine();
-            bw.write("Histórico: " + veiculo.getHistoricoTransferencia());
             bw.newLine();
             bw.write("Ano: " + veiculo.getAno());
             bw.newLine();
@@ -86,7 +77,7 @@ import java.io.IOException;
 
     // Submenu 1 - Cadastro de veículos
     public static void submenuCadastroVeiculo(Scanner ler) {
-        ArrayList<Veiculo> veiculos = new ArrayList<>();
+        
         int opcao;
         do {
             System.out.println("\n-- Cadastro de Veículos --");
@@ -99,22 +90,13 @@ import java.io.IOException;
             switch (opcao) {
                 case 1:
                     ler.nextLine();
-                    System.out.print("Digite a placa: ");
-                    String placa = ler.nextLine();
-
-                    if (placaExiste(placa, veiculos)) {
-                        System.out.println("⚠ Erro: Placa já cadastrada!");
-                        break;
-                    } else {
+                    
                         Veiculo veiculo = new Veiculo();
-                        veiculo.setPlaca(placa);
                         veiculo.cadastrarVeiculo(ler);
                         veiculos.add(veiculo);
                         salvarVeiculoEmArquivo(veiculo);
                         System.out.println(" ");
-
                         System.out.println("Veículo cadastrado com sucesso!");
-                    }
                     break;
                 case 2:
                     System.out.println("\n== Veículos Cadastrados ==");

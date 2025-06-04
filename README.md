@@ -1,2 +1,2 @@
 # ProjetoA3-Venda-de-cartas
-@ Autor hipotetico
+Autores : Sara, Paulo, Mikaias e Igor
