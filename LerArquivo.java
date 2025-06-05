@@ -14,7 +14,7 @@ public class LerArquivo{
       }
       leitor.close();
     } catch (FileNotFoundException e) {
-      System.out.println("An error occurred.");
+      System.out.println("-- Nenhum veículo está cadastrado --");
       e.printStackTrace();
     }
   }
