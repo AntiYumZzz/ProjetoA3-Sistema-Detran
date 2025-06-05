@@ -1,5 +1,6 @@
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -12,7 +13,8 @@ import java.util.Scanner;
     public static void salvarVeiculoEmArquivo(Veiculo veiculo) {
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter("veiculos.txt", true));
-
+            bw.write("Placa: "+veiculo.getPlaca());
+            bw.newLine();
             bw.write("Modelo: " + veiculo.getModelo());
             bw.newLine();
             bw.write("Cor: " + veiculo.getCor());
@@ -29,6 +31,8 @@ import java.util.Scanner;
             System.out.println("Erro ao salvar no arquivo: " + e.getMessage());
         }
     }
+    
+        
 
 
     public static void main(String[] args) {
@@ -99,15 +103,7 @@ import java.util.Scanner;
                         System.out.println("Veículo cadastrado com sucesso!");
                     break;
                 case 2:
-                    System.out.println("\n== Veículos Cadastrados ==");
-                    if (veiculos.isEmpty()) {
-                        System.out.println("Nenhum veículo cadastrado.");
-                    } else {
-                        for (Veiculo v : veiculos) {
-                            v.exibirVeiculoCadastrado();
-                            System.out.println("------------------------");
-                        }
-                    }
+                    LerArquivo.imprimir();
                     break;
 
                 case 3:

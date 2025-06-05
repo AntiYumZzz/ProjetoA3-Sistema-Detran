@@ -47,7 +47,7 @@ public class Veiculo {
     public void cadastrarVeiculo(Scanner ler){
         System.out.println("Formato da placa (Digite Antigo ou Mercosul)");
         formato = ler.nextLine();
-
+        
         while(!(formato.equalsIgnoreCase("antigo") || formato.equalsIgnoreCase("mercosul"))){
             System.out.println("Formato Inválido! Digite novamente");
             formato = ler.nextLine();
@@ -57,14 +57,15 @@ public class Veiculo {
 
         // Isso tudo pra verificar o formato da placa, se é valido e se não foi repetido
         while(true){
-            System.out.print("Placa :");
+            System.out.print("Placa: ");
             placa.id = ler.nextLine();
+
 
             if(formato.equalsIgnoreCase("Antigo")){
                 if(placa.validarPlacaAntiga(placa.id)){
                     break; 
                 }else{
-                    System.out.println("Formato Invalido, tente novamente");
+                    System.out.print("Formato Invalido, tente novamente");
                 } 
             }else if(formato.equalsIgnoreCase("Mercosul")){
                 if(placa.validarPlacaMerco(placa.id)){
