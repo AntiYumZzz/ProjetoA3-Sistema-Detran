@@ -45,11 +45,11 @@ public class Veiculo {
     }
 
     public void cadastrarVeiculo(Scanner ler){
-        System.out.println("Formato da placa (Digite Antigo ou Mercosul)");
+        System.out.println("Formato da placa (Digite Antigo ou Mercosul): ");
         formato = ler.nextLine();
         
         while(!(formato.equalsIgnoreCase("antigo") || formato.equalsIgnoreCase("mercosul"))){
-            System.out.println("Formato Inválido! Digite novamente");
+            System.out.println("Formato Inválido! Digite novamente: ");
             formato = ler.nextLine();
             ler.nextLine();
         }   
