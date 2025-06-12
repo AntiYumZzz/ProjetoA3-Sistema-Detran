@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class LerArquivo{
     
-    public static void imprimir(){
+    public static void imprimirVeiculo(){
     try {
       File arquivo = new File("veiculos.txt");
       Scanner leitor = new Scanner(arquivo);
@@ -18,4 +18,19 @@ public class LerArquivo{
       e.printStackTrace();
     }
   }
+    
+    public static void imprimirUsuario(){
+    try {
+      File arquivo = new File("usuarios.txt");
+      Scanner leitor = new Scanner(arquivo);
+      while (leitor.hasNextLine()) {
+        String data = leitor.nextLine();
+        System.out.println(data);
+      }
+      leitor.close();
+    }catch (FileNotFoundException e) {
+        System.out.println("-- Nenhum usuário está cadastrado --");
+        e.printStackTrace();
+      }
+    }
 }

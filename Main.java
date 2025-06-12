@@ -8,6 +8,7 @@ import java.util.Scanner;
     // Método para verificar se uma placa já está cadastrada
     public class Main {
         public static ArrayList<Veiculo> veiculos = new ArrayList<>();
+        public static Proprietario propLogin = new Proprietario();
 
     //Método utilitário que salva os dados de um veículo em um arquivo .txt
     public static void salvarVeiculoEmArquivo(Veiculo veiculo) {
@@ -38,8 +39,45 @@ import java.util.Scanner;
     public static void main(String[] args) {
         Scanner ler = new Scanner(System.in);
         int opcao = -1;
+        System.out.println("1 - Login \n2 - Cadastro");
+        switch(opcao){
+            case 1:
+                while(true){
+                    System.out.println("--- Login ---");
+                    System.out.print("Usuário: ");
+                    String user = ler.nextLine();
 
+                    System.out.print("Senha: ");
+                    String senha = ler.nextLine();
 
+                    if (propLogin.autenticacao(user, senha)) {
+                        System.out.println("Bem vindo, " + user + "!");
+                        break;
+                    } else {
+                        System.out.println("Usuário ou senha inválida. Tente novamente.");
+                    }
+                }
+                break;
+            case 2:
+                while(true){
+                    System.out.println("--- Cadastro ---");
+                    System.out.print("Usuário: ");
+                    String user = ler.nextLine();
+                    
+                    System.out.print("Senha: ");
+                    String senha = ler.nextLine();
+                    
+                    if(propLogin.users.containsKey(user)){
+                        System.out.println("Usuário ja existe, tente novamente");
+                    }else{
+                        propLogin.cadastroProprietario(user, senha);
+                        System.out.println("Usuário registrado com sucesso\nBem vindo, " + user + "!");
+                        break;
+                    }
+                }
+                break;
+         }
+        opcao = -1;
         while (opcao != 0) {
             // Menu Principal
             System.out.println("\n==== MENU PRINCIPAL ====");
@@ -103,7 +141,7 @@ import java.util.Scanner;
                         System.out.println("Veículo cadastrado com sucesso!");
                     break;
                 case 2:
-                    LerArquivo.imprimir();
+                    LerArquivo.imprimirVeiculo();
                     break;
 
                 case 3:
