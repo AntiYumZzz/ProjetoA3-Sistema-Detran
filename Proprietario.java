@@ -1,7 +1,7 @@
 import java.util.*;
 public class Proprietario { 
     String user, senha, cpf; 
-    private Map<String, String> users; // usuario, senha e cpf 
+    public Map<String, String> users; // usuario, senha e cpf 
     
     
     public Proprietario(){
