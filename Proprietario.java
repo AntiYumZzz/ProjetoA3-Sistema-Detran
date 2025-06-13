@@ -1,16 +1,20 @@
 import java.util.*;
 public class Proprietario { 
-    String user, senha, cpf; 
-    public Map<String, String> users; // usuario, senha e cpf 
-    
-    
-    public Proprietario(){
-        users  = new HashMap<>();
-        // exemplo usuario 
-        users.put("teste", "1234"); 
-        users.put("teste2", "1234");
-        
-    } 
+    String user, nome, cpf, senha, email, dataNascimento, telefone;
+    public Map<String, String> users; // usuario, senha e cpfpublic String nome;
+
+
+
+
+    public void cadastroProprietario(){
+        this.nome = nome;
+        this.cpf = cpf;
+        this.senha = senha;
+        this.email = email;
+        this.dataNascimento = dataNascimento;
+        this.telefone = telefone;
+    }
+
     
     public boolean validarCpf(String cpf){
        return cpf.matches("^[0-9]{11}$");
@@ -27,4 +31,9 @@ public class Proprietario {
     public void consultarVeiculo() {
         System.out.println("Veiculo consultado!");
     } 
-    public void checarHistorico() { System.out.println("Historico checado"); } }
+    public void checarHistorico() {
+        System.out.println("Historico checado");
+    }
+
+
+}
