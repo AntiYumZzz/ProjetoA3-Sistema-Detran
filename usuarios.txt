@@ -1,0 +1,7 @@
+Nome: paulo
+CPF: 456456464
+Senha: 415656
+E-mail: asdfasdfasfas
+Data de nascimento: 22222222
+Telefone: 65565465
+-----------------------------
