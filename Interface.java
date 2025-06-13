@@ -2,8 +2,40 @@ import javax.swing.*; // Componentes gráficos Swing
 import javax.swing.border.*; // Bordas para componentes Swing
 import java.awt.*; // Layouts e gerenciamento de janelas
 import java.awt.event.*; //Gerenciamento de butoes
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
+
+
+
 
 public class Interface {
+
+    // Método para salvar os usuários em um arquivo TXT
+    public static void salvarUsuarios(Proprietario users) {
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter("usuarios.txt", true));
+            bw.write("Nome: " + users.nome);
+            bw.newLine();
+            bw.write("CPF: " + users.cpf);
+            bw.newLine();
+            bw.write("Senha: " + users.senha);
+            bw.newLine();
+            bw.write("E-mail: " + users.email);
+            bw.newLine();
+            bw.write("Data de nascimento: " + users.dataNascimento);
+            bw.newLine();
+            bw.write("Telefone: " + users.telefone);
+            bw.newLine();
+            bw.write("-----------------------------");
+            bw.newLine();
+
+            bw.close();
+        } catch (IOException e) {
+            System.out.println("Erro ao salvar no arquivo: " + e.getMessage());
+        }
+    }
 
     public static void main(String[] args) {
         // Criação da janela principal do sistema
@@ -220,7 +252,7 @@ public class Interface {
 
         // Painel com campos do formulário, em grade 3x2
         JPanel formPanel = new JPanel(new GridLayout(3, 2, 20, 20));
-        formPanel.setMaximumSize(new Dimension(500, 200));
+        formPanel.setMaximumSize(new Dimension(800, 200));
         formPanel.setOpaque(false);
 
         // Labels para campos do formulário
@@ -231,17 +263,70 @@ public class Interface {
         };
 
         // Campos de texto simples para entrada de dados
-        for (String label : labels) {
-            JTextField field = new JTextField(20);
-            field.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
-            formPanel.add(field);
-        }
+        // Campos do formulário
+        JTextField nomeField = new CaixaTexto("Digite seu nome");
+        JTextField cpfField = new CaixaTexto("Digite seu CPF");
+        JPasswordField senhaField = new CaixaSenha("Digite sua senha");
+        JTextField emailField = new CaixaTexto("Digite seu e-mail");
+        JTextField nascimentoField = new CaixaTexto("DD/MM/AAAA");
+        JTextField telefoneField = new CaixaTexto("(xx) xxxxx-xxxx");
+
+
+         // Layout com GridLayout
+        formPanel.add(new JLabel("Nome:"));
+        formPanel.add(nomeField);
+        formPanel.add(new JLabel("CPF:"));
+        formPanel.add(cpfField);
+        formPanel.add(new JLabel("Senha:"));
+        formPanel.add(senhaField);
+        formPanel.add(new JLabel("Email:"));
+        formPanel.add(emailField);
+        formPanel.add(new JLabel("Data Nascimento:"));
+        formPanel.add(nascimentoField);
+        formPanel.add(new JLabel("Telefone:"));
+        formPanel.add(telefoneField);
 
         // Botão para finalizar cadastro (implementação pendente)
         JButton finishButton = new JButton("Finalizar Cadastro");
         finishButton.setFont(new Font("Arial", Font.PLAIN, 20));
         finishButton.setMaximumSize(new Dimension(200, 40));
         finishButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+
+
+        finishButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String nome = nomeField.getText();
+                String cpf = cpfField.getText();
+                String senha = new String(senhaField.getPassword());
+                String email = emailField.getText();
+                String nascimento = nascimentoField.getText();
+                String telefone = telefoneField.getText();
+
+                // Validação simples de senha
+
+                // Criar e preencher os dados do usuário
+                Proprietario novoUsuario = new Proprietario();
+                novoUsuario.nome = nome;
+                novoUsuario.cpf = cpf;
+                novoUsuario.senha = senha;
+                novoUsuario.email = email;
+                novoUsuario.dataNascimento = nascimento;
+                novoUsuario.telefone = telefone;
+
+                salvarUsuarios(novoUsuario);
+
+                // Mensagem e redirecionamento
+                JOptionPane.showMessageDialog(panel, "Cadastro realizado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                CardLayout cl = (CardLayout) cards.getLayout();
+                cl.show(cards, "Login");
+            }
+        });
+
+
+
+
+
 
         // TODO: implementar lógica para validação e envio dos dados para backend
 
