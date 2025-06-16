@@ -1,7 +1,1 @@
-Dono: Sara
-Placa: avc1234
-Modelo: ModeloS
-Marca: MarcaS
-Cor: corS
-Ano: 2005
------------------------------
+
