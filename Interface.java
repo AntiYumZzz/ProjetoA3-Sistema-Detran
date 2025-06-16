@@ -5,6 +5,10 @@ import java.awt.event.*; //Gerenciamento de butoes
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 
 
@@ -12,12 +16,71 @@ import java.io.IOException;
 
 public class Interface {
 
+
+
+    //Este método verifica se um email e senha fornecidos correspondem a um usuário registrado no arquivo usuarios.txt
+    private static boolean verificarLogin(String email, String senha) {
+        try (BufferedReader br = new BufferedReader(new FileReader("usuarios.txt"))) { //Usa BufferedReader para ler o arquivo linha por linha.
+            String line;
+            String currentEmail = "";
+            String currentSenha = "";
+
+            while ((line = br.readLine()) != null) {
+                if (line.startsWith("E-mail: ")) {
+                    currentEmail = line.substring(8).trim();
+                } else if (line.startsWith("Senha: ")) {
+                    currentSenha = line.substring(7).trim();
+
+                    // DEBUG: Mostrar valores lidos e comparados
+                    System.out.println("Email procurado: " + email);
+                    System.out.println("Senha procurada: " + senha);
+                    System.out.println("Current Email: " + currentEmail);
+                    System.out.println("Current Senha: " + currentSenha);
+
+                    // Verifica se o email e senha correspondem
+                    if (currentEmail.equalsIgnoreCase(email) && currentSenha.equals(senha)) {
+                        System.out.println("Login válido!"); // Confirmação adicional
+                        return true;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Erro ao verificar login: " + e.getMessage());
+        }
+        System.out.println("Login inválido ou usuário não encontrado."); // Mensagem se falhar
+        return false;
+    }
+
+
+
+    //Método para colocar os nomes dos campos em cima das caixas
+    private static JPanel criarCampoComLabel(String labelText, JComponent campo) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel label = new JLabel(labelText);
+        label.setAlignmentX(Component.LEFT_ALIGNMENT);
+        label.setFont(new Font("Arial", Font.PLAIN, 16));
+
+        // Define tamanho máximo para o campo
+        campo.setMaximumSize(new Dimension(300, 30));
+        campo.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        panel.add(label);
+        panel.add(Box.createVerticalStrut(5)); // Espaço entre label e campo
+        panel.add(campo);
+
+        return panel;
+    }
+
+
     // Método para salvar os usuários em um arquivo TXT
     public static void salvarUsuarios(Proprietario users) {
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter("usuarios.txt", true));
             bw.write("Nome: " + users.nome);
-            bw.newLine();
+            bw.newLine(); // O método bw.newLine() é usado para inserir uma quebra de linha em um arquivo de texto
             bw.write("CPF: " + users.cpf);
             bw.newLine();
             bw.write("Senha: " + users.senha);
@@ -32,7 +95,7 @@ public class Interface {
             bw.newLine();
 
             bw.close();
-        } catch (IOException e) {
+        } catch (IOException e) { // O bloco catch (IOException e) é usado para capturar e tratar erros que podem ocorrer durante operações de entrada/saída
             System.out.println("Erro ao salvar no arquivo: " + e.getMessage());
         }
     }
@@ -51,7 +114,8 @@ public class Interface {
         // Criação das diferentes páginas/telas do sistema
         JPanel loginPage = createLoginPanel(cards); // Tela de login
         JPanel registerPage = createRegisterPanel(cards); // Tela de cadastro de usuário
-        JPanel mainPage = createMainPanel(cards, "Usuario"); // Tela principal após login, com nome de usuário padrão
+        JPanel mainPage = createMainPanel(cards, "");
+        mainPage.setName("Main"); // Tela principal após login, com nome de usuário padrão
         JPanel vehicleRegistrationPage = createVehicleRegistrationPanel(cards); // Tela de cadastro de veículos
         JPanel vehicleTransferencePage = createVehicleTransferencePanel(cards); // Tela de transferência de veículos
 
@@ -79,35 +143,21 @@ public class Interface {
         JLabel titleLabel = new JLabel("Sistema Detran");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 36));
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 30, 0)); // Espaçamento inferior
-
-        // Painel com campos de login e botões
-        JPanel loginPanel = new JPanel();
-        loginPanel.setLayout(new BoxLayout(loginPanel, BoxLayout.Y_AXIS)); // Layout vertical (coluna)
-        loginPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createTitledBorder(
-                        BorderFactory.createLineBorder(Color.GRAY, 2), // Borda cinza
-                        "", TitledBorder.LEFT, TitledBorder.TOP,
-                        new Font("Arial", Font.BOLD, 16),
-                        Color.DARK_GRAY
-                ),
-                BorderFactory.createEmptyBorder(20, 20, 20, 20) // Espaçamento interno
-        ));
-        loginPanel.setPreferredSize(new Dimension(400, 600)); // Tamanho preferido do painel
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 30, 0));
 
         // Label "Login"
         JLabel loginLabel = new JLabel("Login");
         loginLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        loginLabel.setFont(new Font("Arial", Font.BOLD, 26));
+        loginLabel.setFont(new Font("Arial", Font.BOLD, 46));
 
-        // Campo para usuário
-        JTextField username = new JTextField(20);
-        username.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
-        username.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // Campo para e-mail
+        JTextField emailField = new JTextField(20);
+        emailField.setMaximumSize(new Dimension(300, 30));
+        emailField.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Campo para senha
         JPasswordField password = new JPasswordField(20);
-        password.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
+        password.setMaximumSize(new Dimension(300, 30));
         password.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Label para mensagens de erro
@@ -115,54 +165,63 @@ public class Interface {
         errorLabel.setForeground(Color.RED);
         errorLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Botão para realizar login
+        // Botão de login
         JButton loginButton = new JButton("Entrar");
         loginButton.setFont(new Font("Arial", Font.PLAIN, 20));
         loginButton.setMaximumSize(new Dimension(200, 40));
         loginButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Ação do botão login - valida se os campos não estão vazios
-        loginButton.addActionListener(e -> {
-            String user = username.getText();
-            String pass = new String(password.getPassword());
-
-            if (!user.isEmpty() && !pass.isEmpty()) {
-                errorLabel.setText(""); // Limpa mensagem de erro
-
-                // TODO: Aqui deve ser inserida a lógica real de autenticação contra banco de dados ou sistema
-
-                // Após sucesso, troca para tela principal passando o nome do usuário
-                CardLayout cl = (CardLayout) cards.getLayout();
-                cards.add(createMainPanel(cards, user), "Main");
-                cl.show(cards, "Main");
-            } else {
-                errorLabel.setText("Por favor, preencha todos os campos."); // Mensagem de erro
-            }
-        });
-
-        // Botão para ir para a tela de cadastro de novo usuário
+        // Botão de cadastro
         JButton registerButton = new JButton("<html><u>Cadastre-se</u></html>");
         registerButton.setBorderPainted(false);
         registerButton.setContentAreaFilled(false);
         registerButton.setFocusPainted(false);
-        registerButton.setMnemonic('C'); // Atalho de teclado: Alt + C
         registerButton.setForeground(Color.BLUE);
         registerButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         registerButton.setFont(new Font("Arial", Font.PLAIN, 12));
         registerButton.setMaximumSize(new Dimension(200, 40));
         registerButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        registerButton.addActionListener(e -> {
-            CardLayout cl = (CardLayout) cards.getLayout();
-            cl.show(cards, "Register"); // Mostra tela de cadastro
-        });
+        // Painel principal que conterá todos os elementos
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBackground(new Color(182, 182, 182));
+
+        // Painel de login (formulário)
+        JPanel loginPanel = new JPanel();
+        loginPanel.setLayout(new BoxLayout(loginPanel, BoxLayout.Y_AXIS));
+        loginPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder(
+                        BorderFactory.createLineBorder(Color.GRAY, 2),
+                        "", TitledBorder.LEFT, TitledBorder.TOP,
+                        new Font("Arial", Font.BOLD, 16),
+                        Color.DARK_GRAY
+                ),
+                BorderFactory.createEmptyBorder(20, 40, 20, 40)
+        ));
+        loginPanel.setMaximumSize(new Dimension(400, Integer.MAX_VALUE));
+        loginPanel.setBackground(Color.WHITE);
 
         // Adiciona os componentes ao painel de login
         loginPanel.add(loginLabel);
-        loginPanel.add(Box.createVerticalStrut(30)); // Espaço vertical
-        loginPanel.add(username);
         loginPanel.add(Box.createVerticalStrut(30));
-        loginPanel.add(password);
+
+        // Painel para campos de entrada
+        JPanel fieldsPanel = new JPanel();
+        fieldsPanel.setLayout(new BoxLayout(fieldsPanel, BoxLayout.Y_AXIS));
+        fieldsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        fieldsPanel.setBackground(Color.WHITE);
+
+        // Adiciona os campos com labels
+        fieldsPanel.add(criarCampoComLabel("E-mail:", emailField));
+        fieldsPanel.add(Box.createVerticalStrut(20));
+        fieldsPanel.add(criarCampoComLabel("Senha:", password));
+
+        // Centraliza o painel de campos
+        fieldsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        loginPanel.add(fieldsPanel);
+
+        // Adiciona os demais componentes
         loginPanel.add(Box.createVerticalStrut(10));
         loginPanel.add(errorLabel);
         loginPanel.add(Box.createVerticalStrut(20));
@@ -170,22 +229,61 @@ public class Interface {
         loginPanel.add(Box.createVerticalStrut(30));
         loginPanel.add(registerButton);
 
-        // Combina título e formulário verticalmente
-        Box verticalBox = Box.createVerticalBox();
-        verticalBox.add(titleLabel);
-        verticalBox.add(loginPanel);
-
-        // Painel externo para centralizar na tela e adicionar margens laterais
+        // Configuração do container principal
         JPanel container = new JPanel(new GridBagLayout());
         container.setBackground(new Color(182, 182, 182));
-        container.setBorder(BorderFactory.createEmptyBorder(0, 150, 0, 150)); // Margem esquerda e direita
-        container.add(verticalBox);
-        container.setMaximumSize(new Dimension(480, Integer.MAX_VALUE));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.insets = new Insets(20, 0, 20, 0);
+
+        // Adiciona o título
+        container.add(titleLabel, gbc);
+
+        gbc.gridy++;
+        container.add(loginPanel, gbc);
+
+        // Configura ação do botão de login
+        loginButton.addActionListener(e -> {
+            String email = emailField.getText().trim();
+            String senha = new String(password.getPassword()).trim();
+
+            if (verificarLogin(email, senha)) {
+                // Encontra e remove o painel Main existente
+                for (Component comp : cards.getComponents()) {
+                    if (comp.getName() != null && comp.getName().equals("Main")) {
+                        cards.remove(comp);
+                        break;
+                    }
+                }
+
+                // Cria e adiciona o novo painel Main
+                JPanel newMainPanel = createMainPanel(cards, email);
+                newMainPanel.setName("Main");
+                cards.add(newMainPanel, "Main");
+
+                // Mostra o painel Main
+                CardLayout cl = (CardLayout) cards.getLayout();
+                cl.show(cards, "Main");
+            } else {
+                errorLabel.setText("E-mail ou senha incorretos");
+            }
+        });
+
+        // Configura ação do botão de cadastro
+        registerButton.addActionListener(e -> {
+            CardLayout cl = (CardLayout) cards.getLayout();
+            cl.show(cards, "Register");
+        });
 
         return container;
     }
 
+
+
     // Tela principal após login bem-sucedido
+
     private static JPanel createMainPanel(JPanel cards, String username) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -250,11 +348,6 @@ public class Interface {
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
         title.setBorder(BorderFactory.createEmptyBorder(0, 0, 30, 0));
 
-        // Painel com campos do formulário, em grade 3x2
-        JPanel formPanel = new JPanel(new GridLayout(3, 2, 20, 20));
-        formPanel.setMaximumSize(new Dimension(800, 200));
-        formPanel.setOpaque(false);
-
         // Labels para campos do formulário
         String[] labels = {
                 "Nome", "Data Nascimento",
@@ -263,7 +356,24 @@ public class Interface {
         };
 
         // Campos de texto simples para entrada de dados
-        // Campos do formulário
+        // Campo do formulário, de cadastro
+        JPanel formPanel = new JPanel();
+        formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
+        formPanel.setMaximumSize(new Dimension(400, 400));
+        JPanel container = new JPanel();
+        container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
+
+        container.add(Box.createVerticalGlue()); // Espaço acima
+        container.add(formPanel);
+        container.add(Box.createVerticalGlue()); // Espaço abaixo
+
+        formPanel.setAlignmentX(Component.CENTER_ALIGNMENT); // Centraliza horizontalmente
+
+        formPanel.setAlignmentX(Component.CENTER_ALIGNMENT); // Centraliza horizontalmente
+        formPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
+
+
+        // Campos do formulário de cadastro
         JTextField nomeField = new CaixaTexto("Digite seu nome");
         JTextField cpfField = new CaixaTexto("Digite seu CPF");
         JPasswordField senhaField = new CaixaSenha("Digite sua senha");
@@ -271,29 +381,35 @@ public class Interface {
         JTextField nascimentoField = new CaixaTexto("DD/MM/AAAA");
         JTextField telefoneField = new CaixaTexto("(xx) xxxxx-xxxx");
 
+        // Adição dos campos com labels centralizados
+        formPanel.add(criarCampoComLabel("Nome:", nomeField));
+        formPanel.add(Box.createVerticalStrut(10)); // Esse código é usado para adicionar um espaço vertical fixo de 10 pixels entre componentes em um painel (formPanel) no Java Swing.
 
-         // Layout com GridLayout
-        formPanel.add(new JLabel("Nome:"));
-        formPanel.add(nomeField);
-        formPanel.add(new JLabel("CPF:"));
-        formPanel.add(cpfField);
-        formPanel.add(new JLabel("Senha:"));
-        formPanel.add(senhaField);
-        formPanel.add(new JLabel("Email:"));
-        formPanel.add(emailField);
-        formPanel.add(new JLabel("Data Nascimento:"));
-        formPanel.add(nascimentoField);
-        formPanel.add(new JLabel("Telefone:"));
-        formPanel.add(telefoneField);
+        formPanel.add(criarCampoComLabel("CPF:", cpfField));
+        formPanel.add(Box.createVerticalStrut(10));
 
-        // Botão para finalizar cadastro (implementação pendente)
+        formPanel.add(criarCampoComLabel("Senha:", senhaField));
+        formPanel.add(Box.createVerticalStrut(10));
+
+        formPanel.add(criarCampoComLabel("Email:", emailField));
+        formPanel.add(Box.createVerticalStrut(10));
+
+        formPanel.add(criarCampoComLabel("Data Nascimento:", nascimentoField));
+        formPanel.add(Box.createVerticalStrut(10));
+
+        formPanel.add(criarCampoComLabel("Telefone:", telefoneField));
+        formPanel.add(Box.createVerticalStrut(20));
+
+         // Botão para finalizar cadastro centralizado
         JButton finishButton = new JButton("Finalizar Cadastro");
         finishButton.setFont(new Font("Arial", Font.PLAIN, 20));
         finishButton.setMaximumSize(new Dimension(200, 40));
         finishButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        formPanel.add(finishButton);
+        formPanel.add(Box.createVerticalStrut(10));
 
-
+        // Ação do botão
         finishButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String nome = nomeField.getText();
@@ -303,9 +419,6 @@ public class Interface {
                 String nascimento = nascimentoField.getText();
                 String telefone = telefoneField.getText();
 
-                // Validação simples de senha
-
-                // Criar e preencher os dados do usuário
                 Proprietario novoUsuario = new Proprietario();
                 novoUsuario.nome = nome;
                 novoUsuario.cpf = cpf;
@@ -314,16 +427,14 @@ public class Interface {
                 novoUsuario.dataNascimento = nascimento;
                 novoUsuario.telefone = telefone;
 
+                // Salva os usuários no arquivo txt
                 salvarUsuarios(novoUsuario);
 
-                // Mensagem e redirecionamento
                 JOptionPane.showMessageDialog(panel, "Cadastro realizado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
                 CardLayout cl = (CardLayout) cards.getLayout();
                 cl.show(cards, "Login");
             }
         });
-
-
 
 
 

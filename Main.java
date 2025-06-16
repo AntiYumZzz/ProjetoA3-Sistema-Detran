@@ -40,8 +40,6 @@ import java.util.Scanner;
         Scanner ler = new Scanner(System.in);
         int opcao = -1;
         System.out.println("1 - Login \n2 - Cadastro");
-        opcao = ler.nextInt();
-        
         switch(opcao){
             case 1:
                 while(true){
