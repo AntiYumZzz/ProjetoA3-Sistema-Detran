@@ -138,6 +138,7 @@ public class Interface {
         mainPage.setName("Main"); // Tela principal após login, com nome de usuário padrão
         JPanel vehicleRegistrationPage = createVehicleRegistrationPanel(cards); // Tela de cadastro de veículos
         JPanel vehicleTransferencePage = createVehicleTransferencePanel(cards); // Tela de transferência de veículos
+        JPanel vehicleConsultPage = createVehicleConsultPanel(cards);
 
         // Adiciona as páginas ao painel principal com identificadores únicos
         cards.add(loginPage, "Login");
@@ -145,6 +146,7 @@ public class Interface {
         cards.add(mainPage, "Main");
         cards.add(vehicleRegistrationPage, "VehicleRegistration");
         cards.add(vehicleTransferencePage, "VehicleTransference");
+        cards.add(vehicleConsultPage, "VehicleConsult");
 
         // Configuração para ocupar todo o espaço disponível na janela
         GridBagConstraints gbc = new GridBagConstraints();
@@ -349,6 +351,23 @@ public class Interface {
             cl.show(cards, "VehicleTransference");
         });
 
+        buttons[3].addActionListener(e -> {
+            // Atualiza a tela de consulta com os veículos mais recentes
+            for (Component comp : cards.getComponents()) {
+                if (comp.getName() != null && comp.getName().equals("VehicleConsult")) {
+                    cards.remove(comp);
+                    break;
+                }
+            }
+
+            JPanel newConsultPanel = createVehicleConsultPanel(cards);
+            newConsultPanel.setName("VehicleConsult");
+            cards.add(newConsultPanel, "VehicleConsult");
+
+            CardLayout cl = (CardLayout) cards.getLayout();
+            cl.show(cards, "VehicleConsult");
+        });
+
         // TODO: Implementar ações para "Relatório" e "Consultar"
 
         panel.add(title);
@@ -356,6 +375,110 @@ public class Interface {
 
         return panel;
     }
+
+    private static JPanel createVehicleConsultPanel(JPanel cards) {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(new Color(182, 182, 182));
+
+        // Título da tela
+        JLabel title = new JLabel("Consulta de Veículos");
+        title.setFont(new Font("Arial", Font.BOLD, 36));
+        title.setHorizontalAlignment(SwingConstants.CENTER);
+        title.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
+        panel.add(title, BorderLayout.NORTH);
+
+        // Painel principal para o conteúdo
+        JPanel contentPanel = new JPanel(new BorderLayout());
+        contentPanel.setOpaque(false);
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 50, 10, 50));
+
+        // Modelo de dados para a tabela
+        Object[] columnNames = {"Placa", "Marca", "Modelo", "Cor", "Ano"};
+        Object[][] data = {}; // Dados vazios inicialmente
+
+        // Criar o modelo de tabela
+        javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(data, columnNames) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Torna todas as células não editáveis
+            }
+        };
+
+        JTable table = new JTable(model);
+        table.setFont(new Font("Arial", Font.PLAIN, 14));
+        table.setRowHeight(25);
+        table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+
+        // Preenche a tabela com os veículos do usuário atual
+        try (BufferedReader br = new BufferedReader(new FileReader("veiculos.txt"))) {
+            String line;
+            String dono = "";
+            String placa = "";
+            String modelo = "";
+            String marca = "";
+            String cor = "";
+            String ano = "";
+
+            while ((line = br.readLine()) != null) {
+                if (line.startsWith("Dono: ")) {
+                    dono = line.substring(6).trim();
+                } else if (line.startsWith("Placa: ")) {
+                    placa = line.substring(7).trim();
+                } else if (line.startsWith("Modelo: ")) {
+                    modelo = line.substring(8).trim();
+                } else if (line.startsWith("Marca: ")) {
+                    marca = line.substring(7).trim();
+                } else if (line.startsWith("Cor: ")) {
+                    cor = line.substring(5).trim();
+                } else if (line.startsWith("Ano: ")) {
+                    ano = line.substring(5).trim();
+                } else if (line.equals("-----------------------------")) {
+                    // Verifica se o veículo pertence ao usuário atual
+                    if (dono.equals(currentNome)) {
+                        // Adiciona uma nova linha ao modelo da tabela
+                        model.addRow(new Object[]{placa, marca, modelo, cor, ano});
+                    }
+                    // Resetamos as variáveis para o próximo veículo
+                    dono = "";
+                    placa = "";
+                    modelo = "";
+                    marca = "";
+                    cor = "";
+                    ano = "";
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Erro ao ler arquivo de veículos: " + e.getMessage());
+            JOptionPane.showMessageDialog(panel, "Erro ao carregar veículos", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+
+        // Adiciona a tabela a um JScrollPane para permitir rolagem
+        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setPreferredSize(new Dimension(800, 400));
+        contentPanel.add(scrollPane, BorderLayout.CENTER);
+
+        // Painel para os botões
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setOpaque(false);
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
+
+        JButton backButton = new JButton("Voltar para Menu");
+        backButton.setFont(new Font("Arial", Font.PLAIN, 20));
+        backButton.setPreferredSize(new Dimension(200, 40));
+        backButton.addActionListener(e -> {
+            CardLayout cl = (CardLayout) cards.getLayout();
+            cl.show(cards, "Main");
+        });
+
+        buttonPanel.add(backButton);
+
+        // Adiciona os componentes ao painel principal
+        panel.add(contentPanel, BorderLayout.CENTER);
+        panel.add(buttonPanel, BorderLayout.SOUTH);
+
+        return panel;
+    }
+
 
     // Tela para cadastro de novo usuário
     private static JPanel createRegisterPanel(JPanel cards) {
