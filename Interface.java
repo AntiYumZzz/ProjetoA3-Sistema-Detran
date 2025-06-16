@@ -368,7 +368,7 @@ public class Interface {
             cl.show(cards, "VehicleConsult");
         });
 
-        // TODO: Implementar ações para "Relatório" e "Consultar"
+        // TODO: Implementar ações para "Relatório"
 
         panel.add(title);
         panel.add(buttonPanel);
