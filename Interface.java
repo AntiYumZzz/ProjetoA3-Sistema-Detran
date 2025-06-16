@@ -2,21 +2,13 @@ import javax.swing.*; // Componentes gráficos Swing
 import javax.swing.border.*; // Bordas para componentes Swing
 import java.awt.*; // Layouts e gerenciamento de janelas
 import java.awt.event.*; //Gerenciamento de butoes
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-
-
-
+import java.io.*;
+import java.util.List;
+import java.util.ArrayList;
 
 
 public class Interface {
-
-
+    static String currentNome = "";
 
     //Este método verifica se um email e senha fornecidos correspondem a um usuário registrado no arquivo usuarios.txt
     private static boolean verificarLogin(String email, String senha) {
@@ -25,8 +17,11 @@ public class Interface {
             String currentEmail = "";
             String currentSenha = "";
 
+
             while ((line = br.readLine()) != null) {
-                if (line.startsWith("E-mail: ")) {
+                if(line.startsWith("Nome: ")) {
+                    currentNome = line.substring(6).trim();
+                }else if (line.startsWith("E-mail: ")) {
                     currentEmail = line.substring(8).trim();
                 } else if (line.startsWith("Senha: ")) {
                     currentSenha = line.substring(7).trim();
@@ -34,6 +29,7 @@ public class Interface {
                     // DEBUG: Mostrar valores lidos e comparados
                     System.out.println("Email procurado: " + email);
                     System.out.println("Senha procurada: " + senha);
+                    System.out.println("Current Nome: " + currentNome);
                     System.out.println("Current Email: " + currentEmail);
                     System.out.println("Current Senha: " + currentSenha);
 
@@ -76,20 +72,44 @@ public class Interface {
 
 
     // Método para salvar os usuários em um arquivo TXT
-    public static void salvarUsuarios(Proprietario users) {
+    public static void salvarUsuarios(Proprietario user) {
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter("usuarios.txt", true));
-            bw.write("Nome: " + users.nome);
+            bw.write("Nome: " + user.getNome());
             bw.newLine(); // O método bw.newLine() é usado para inserir uma quebra de linha em um arquivo de texto
-            bw.write("CPF: " + users.cpf);
+            bw.write("CPF: " + user.getCpf());
             bw.newLine();
-            bw.write("Senha: " + users.senha);
+            bw.write("E-mail: " + user.getEmail());
             bw.newLine();
-            bw.write("E-mail: " + users.email);
+            bw.write("Senha: " + user.getSenha());
             bw.newLine();
-            bw.write("Data de nascimento: " + users.dataNascimento);
+            bw.write("Data de nascimento: " + user.getData());
             bw.newLine();
-            bw.write("Telefone: " + users.telefone);
+            bw.write("Telefone: " + user.getTele());
+            bw.newLine();
+            bw.write("-----------------------------");
+            bw.newLine();
+
+            bw.close();
+        } catch (IOException e) { // O bloco catch (IOException e) é usado para capturar e tratar erros que podem ocorrer durante operações de entrada/saída
+            System.out.println("Erro ao salvar no arquivo: " + e.getMessage());
+        }
+    }
+
+    public static void salvarVeiculo(Veiculo veiculo) {
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter("veiculos.txt", true));
+            bw.write("Dono: " + currentNome);
+            bw.newLine(); // O método bw.newLine() é usado para inserir uma quebra de linha em um arquivo de texto
+            bw.write("Placa: " + veiculo.getPlaca());
+            bw.newLine();
+            bw.write("Modelo: " + veiculo.getModelo());
+            bw.newLine();
+            bw.write("Marca: " + veiculo.getMarca());
+            bw.newLine();
+            bw.write("Cor: " + veiculo.getCor());
+            bw.newLine();
+            bw.write("Ano: " + veiculo.getAno());
             bw.newLine();
             bw.write("-----------------------------");
             bw.newLine();
@@ -137,7 +157,7 @@ public class Interface {
         frame.setVisible(true); // Exibe a janela
     }
 
-    // Méyodo para criar a tela de login
+    // Métdo para criar a tela de login
     private static JPanel createLoginPanel(JPanel cards) {
         // Título superior do sistema
         JLabel titleLabel = new JLabel("Sistema Detran");
@@ -259,7 +279,7 @@ public class Interface {
                 }
 
                 // Cria e adiciona o novo painel Main
-                JPanel newMainPanel = createMainPanel(cards, email);
+                JPanel newMainPanel = createMainPanel(cards, currentNome);
                 newMainPanel.setName("Main");
                 cards.add(newMainPanel, "Main");
 
@@ -419,16 +439,21 @@ public class Interface {
                 String nascimento = nascimentoField.getText();
                 String telefone = telefoneField.getText();
 
-                Proprietario novoUsuario = new Proprietario();
-                novoUsuario.nome = nome;
-                novoUsuario.cpf = cpf;
-                novoUsuario.senha = senha;
-                novoUsuario.email = email;
-                novoUsuario.dataNascimento = nascimento;
-                novoUsuario.telefone = telefone;
+                Proprietario novoUsuario = new Proprietario(nome, cpf, senha, email, nascimento, telefone);
+
+
+                if(!novoUsuario.validarCpf(cpf)){
+                    JOptionPane.showMessageDialog(panel, "CPF inválido", "Erro", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                if (nome.isEmpty() || cpf.isEmpty() || senha.isEmpty() || email.isEmpty() || nascimento.isEmpty() || telefone.isEmpty()) {
+                    JOptionPane.showMessageDialog(panel, "Preencha todos os campos", "Erro", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
                 // Salva os usuários no arquivo txt
                 salvarUsuarios(novoUsuario);
+
 
                 JOptionPane.showMessageDialog(panel, "Cadastro realizado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
                 CardLayout cl = (CardLayout) cards.getLayout();
@@ -439,7 +464,7 @@ public class Interface {
 
 
 
-        // TODO: implementar lógica para validação e envio dos dados para backend
+
 
         // Botão para voltar à tela de login
         JButton backButton = new JButton("Voltar para Login");
@@ -503,6 +528,18 @@ public class Interface {
         JTextField fieldPlaca = new JTextField();
         fieldPlaca.setPreferredSize(fieldSize);
 
+        JRadioButton radioButtonAntigo = new JRadioButton("Formato Antigo");
+        radioButtonAntigo.setActionCommand("antigo");
+        JRadioButton radioButtonMerco = new JRadioButton("Formato Mercosul");
+        radioButtonMerco.setActionCommand("mercosul");
+
+        ButtonGroup groupPlaca = new ButtonGroup();
+        groupPlaca.add(radioButtonAntigo);
+        groupPlaca.add(radioButtonMerco);
+
+
+
+
         // Restringe o campo 'Ano' para aceitar apenas números
         fieldAno.addKeyListener(new KeyAdapter() {
             public void keyTyped(KeyEvent e) {
@@ -544,7 +581,13 @@ public class Interface {
         gbc.gridy = 3;
         formPanel.add(fieldAno, gbc);
 
-        // Terceira linha: Placa (alinhada com a segunda coluna)
+        // Terceira linha: Jradiobuttons e Placa (alinhada com a segunda coluna)
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        formPanel.add(radioButtonAntigo, gbc);
+        gbc.gridy = 6;
+        formPanel.add(radioButtonMerco, gbc);
+
         gbc.gridx = 1;
         gbc.gridy = 4;
         formPanel.add(labelPlaca, gbc);
@@ -567,6 +610,54 @@ public class Interface {
         backButton.setMaximumSize(new Dimension(200, 40));
         backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        // Ação do botão salvar
+        saveButton.addActionListener((new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String marca = fieldMarca.getText();
+                String modelo = fieldModelo.getText();
+                String cor = fieldCor.getText();
+                String ano = fieldAno.getText();
+                String placa = fieldPlaca.getText();
+
+                Veiculo novoVeiculo = new Veiculo();
+
+                novoVeiculo.setMarca(marca);
+                novoVeiculo.setModelo(modelo);
+                novoVeiculo.setCor(cor);
+                novoVeiculo.setAno(ano);
+                novoVeiculo.setPlaca(placa);
+
+                ButtonModel modeloSelecionado = groupPlaca.getSelection();
+                String comandoChamado = modeloSelecionado.getActionCommand();
+
+                if (marca.isEmpty() || modelo.isEmpty() || cor.isEmpty() || ano.isEmpty()|| placa.isEmpty()) {
+                    JOptionPane.showMessageDialog(panel, "Preencha todos os campos", "Erro", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                if(comandoChamado.equals("antigo")){
+                    if(!novoVeiculo.placa.validarPlacaAntiga(placa)){
+                        JOptionPane.showMessageDialog(panel, "Formato de placa inválido", "Erro", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                }else if(comandoChamado.equals("merco")){
+                    if(!novoVeiculo.placa.validarPlacaMerco(placa)){
+                        JOptionPane.showMessageDialog(panel, "Formato de placa inválido", "Erro", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
+
+
+                // Salva o veículo
+
+                salvarVeiculo(novoVeiculo);
+
+                JOptionPane.showMessageDialog(panel, "Veículo cadastrado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                CardLayout cl = (CardLayout) cards.getLayout();
+                cl.show(cards, "Main");
+            }
+        }));
         // Ação do botão voltar
         backButton.addActionListener(e -> {
             CardLayout cl = (CardLayout) cards.getLayout();
@@ -615,20 +706,10 @@ public class Interface {
         veiculoComboBox.setPreferredSize(smallFieldSize);
         formPanel.add(veiculoComboBox, gbc);
 
-        // Campo Remetente
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        formPanel.add(new JLabel("Remetente:"), gbc);
-
-        gbc.gridx = 1;
-        JTextField remetenteField = new JTextField();
-        remetenteField.setPreferredSize(fieldSize);
-        remetenteField.setMaximumSize(fieldSize);
-        formPanel.add(remetenteField, gbc);
 
         // Campo Destinatário
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 1;
         formPanel.add(new JLabel("Destinatário:"), gbc);
 
         gbc.gridx = 1;
@@ -639,7 +720,7 @@ public class Interface {
 
         // Campo Data para Transferência
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 2;
         formPanel.add(new JLabel("Data P/ Transferência:"), gbc);
 
         gbc.gridx = 1;

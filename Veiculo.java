@@ -1,12 +1,13 @@
+import java.io.Serializable;
 import java.util.Scanner;
 
-public class Veiculo {
+public class Veiculo implements Serializable {
     private String formato;
-    private Placa placa = new Placa();
+    protected Placa placa = new Placa();
     private Modelo modelo = new Modelo();
     private Marca marca = new Marca();
     private String cor;
-    private int ano;
+    private String ano;
 
     // getters e setters
     public String getPlaca(){
@@ -21,7 +22,7 @@ public class Veiculo {
     public String getMarca(){
         return marca.nome;
     }
-    public int getAno(){
+    public String getAno(){
         return ano;
     }
     public String getFormato(){
@@ -40,6 +41,7 @@ public class Veiculo {
     public String setMarca(String novaMarca){
         return this.marca.nome = novaMarca;
     }
+    public String setAno(String novoAno){return this.ano = novoAno;}
     public String setFormato(String novoFormato){
         return this.formato = novoFormato;
     }
@@ -86,7 +88,7 @@ public class Veiculo {
         marca.nome = ler.nextLine();
 
         System.out.print("Ano: ");
-        ano = ler.nextInt();
+        ano = ler.nextLine();
         ler.nextLine();
         
     }
