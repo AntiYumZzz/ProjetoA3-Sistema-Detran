@@ -1,2 +1,2 @@
-# ProjetoA3-Venda-de-cartas
+# ProjetoA3-Sistema-Detran
 Autores : Sara, Paulo, Mikaias e Igor
