@@ -1,2 +1,2 @@
 # ProjetoA3-Sistema-Detran
-Autores : Sara, Paulo, Mikaias e Igor
+Autores : Sara Garcia, Paulo Henrique, Mikaias Castilhos e Igor Wolker
