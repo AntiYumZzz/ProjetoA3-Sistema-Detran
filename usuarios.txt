@@ -1,14 +1,1 @@
-Nome: teste1
-CPF: testecpf1
-E-mail: testee1
-Senha: testes1
-Data de nascimento: 1111111111111111
-Telefone: 11111112223124124124
------------------------------
-Nome: Sara
-CPF: 86897187020
-E-mail: email2
-Senha: senha2
-Data de nascimento: 9999999999
-Telefone: 1111123132
------------------------------
+
